@@ -5,12 +5,12 @@ RESPUESTAS = {
     "horario": "Las clases son de 7:00 am a 12:00 pm (Jornada Matutina) y de 1:00 pm a 6:10 pm (Jornada Vespertina).",
     "ubicación": "Estamos ubicados en Santa Rita, Copán, Honduras.",
     "director": "El director es el Lic. Carlos Manuel Chinchilla.",
-    "teléfono": "Nuestro número es +504 9734-6370.",
+    "teléfono": "Nuestro número es +504 93458234",
+    "matrícula": "La matrícula es gratis.",
     "correo": "Puedes escribirnos a Insuca@insuca.edu.hn",
     "becas": "Sí, contamos con programas de becas académicas y deportivas.",
     "inscripción": "El proceso de inscripción comienza en enero.",
     "requisitos": "Debes presentar partida de nacimiento, certificado de estudios y 4 fotos tamaño carnet.",
-    "matrícula": "La matrícula es gratis.",
     "documentos": "Debes entregar fotocopia de identidad y boletín.",
     "ingreso": "El ingreso se evalúa mediante entrevista y prueba escrita.",
     "carreras": "Ofrecemos informática, contaduría y bachillerato en ciencias.",
@@ -40,7 +40,6 @@ RESPUESTAS = {
     "tareas": "Los docentes asignan tareas regularmente a través de Google Classroom.",
     "seguimiento académico": "Realizamos seguimiento a estudiantes con bajo rendimiento y les ofrecemos apoyo.",
     "tutorias": "Ofrecemos tutorías personalizadas para mejorar el rendimiento académico.",
-    "mensualidad": "La mensualidad es de L. 100.",
     "pago": "Los pagos se realizan en efectivo o por transferencia.",
     "graduación": "La graduación se realiza en noviembre.",
     "título": "Al finalizar tu carrera se te entrega un título técnico avalado por la Secretaría de Educación.",
@@ -53,101 +52,108 @@ RESPUESTAS = {
     "enfermería": "Tenemos personal capacitado para atender emergencias básicas.",
     "seguridad": "Contamos con vigilancia durante la entrada y salida de los estudiantes.",
     "asistencia": "La asistencia se registra a diario y se reporta en caso de inasistencias frecuentes.",
-    "salida_temprana": "Las salidas anticipadas solo se permiten con autorización de los padres.",
+    "salida temprana": "Las salidas anticipadas solo se permiten con autorización de los padres.",
     "facebook": "Síguenos como Instituto Superación Cashapa en Facebook.",
     "instagram": "En Instagram somos Instituto Superación Cashapa.",
     "enfermedades": "Si su hijo presenta síntomas de enfermedad, por favor no lo envíe al centro educativo",
     "celular": "El uso del celular está permitido únicamente con fines educativos y bajo supervisión del docente.",
-    "formacion_docente": "Nuestros docentes reciben capacitaciones constantes en metodologías y tecnología educativa.",
+    "formacion docente": "Nuestros docentes reciben capacitaciones constantes en metodologías y tecnología educativa.",
     "dudas materia": "Los estudiantes pueden consultar dudas con sus docentes dentro o fuera del horario de clase, según disponibilidad.",
     "evaluación docentes": "Realizamos evaluaciones a los docentes cada periodo para mejorar la calidad educativa.",
     "soy nuevo": "Ofrecemos orientación especial para estudiantes de nuevo ingreso durante sus primeras semanas, cuenta con nuestro apoyo.",
     "ayuda":"Estoy aquí para ayudarte. ¿Qué necesitas saber?",
     "gracias": "¡De nada! Estoy para servirte.",
     "adiós": "¡Hasta pronto!",
+    "default": "Lo siento, no entendí tu pregunta. ¿Podrías reformularla?"
     
 }
 
-
 def main(page: ft.Page):
     page.title = "InsuBot - Asistente Virtual"
+    page.theme_mode = ft.ThemeMode.DARK
+    page.bgcolor = "#121212"
     page.window_width = 400
     page.window_height = 600
     page.window_resizable = False
-    page.bgcolor = ft.Colors.BLACK
-    page.theme_mode = ft.ThemeMode.DARK
 
-    chat_area = ft.ListView(
-        expand=True,
-        spacing=10,
-        padding=10,
-        auto_scroll=True,
+    chat = ft.ListView(expand=True, spacing=10, padding=10, auto_scroll=True)
+
+    user_input = ft.TextField(
+        hint_text="Escribe tu mensaje...",
+        border_radius=30,
+        filled=True,
+        fill_color="#1e1e1e",
+        text_style=ft.TextStyle(color="#ffffff"),
+        cursor_color="white",
+        expand=True
     )
 
-    input_box = ft.TextField(
-        label="Escribe tu mensaje",
-        hint_text="Ejmp. ¿Cuál es el horario de clases?",
-        text_style=ft.TextStyle(color="#FFFFFF"),         
-        hint_style=ft.TextStyle(color="#BDBDBD"),         
-        bgcolor="#1E1E1E",                                
-        border_color="#2979FF",                           
-        focused_border_color="#2979FF",                   
-        cursor_color="#2979FF",                           
-        autofocus=True,
-        expand=True,
-        on_submit=lambda e: send_message(e)
-    )
+    def responder(e=None):  # <-- Permitir llamadas desde botón e teclado
+        pregunta = user_input.value.strip().lower()
+        if not pregunta:
+            return
+        respuesta = RESPUESTAS.get(pregunta, RESPUESTAS["default"])
 
-    send_button = ft.ElevatedButton(
-        "Enviar",
-        on_click=lambda e: send_message(),
+        add_message(pregunta, is_user=True)
+        add_message(respuesta, is_user=False)
+
+        user_input.value = ""
+        page.update()
+
+    def add_message(text, is_user=False):
+        bubble_color = "#4e5fb6" if is_user else "#2c2f48"
+        text_color = "white"
+
+        message = ft.Container(
+            content=ft.Text(text, color=text_color),
+            padding=10,
+            bgcolor=bubble_color,
+            border_radius=20,
+            width=550,
+        )
+
+        chat.controls.append(
+            ft.Row(
+                controls=[message],
+                alignment=ft.MainAxisAlignment.END if is_user else ft.MainAxisAlignment.START
+            )
+        )
+
+    send_btn = ft.IconButton(
+        icon=ft.Icons.SEND_ROUNDED,
+        icon_color="white",
+        bgcolor="#4e5fb6",
+        on_click=responder,  # <-- Aquí se conecta correctamente
+        tooltip="Enviar",
         style=ft.ButtonStyle(
-            bgcolor="#2979FF",        
-            color="#FFFFFF",          
-            padding=20,
+            shape=ft.RoundedRectangleBorder(radius=30)
         )
     )
-    input_row = ft.Row(
-        controls=[input_box, send_button],
-        alignment=ft.MainAxisAlignment.CENTER
+
+    # También permite enviar con la tecla ENTER
+    user_input.on_submit = responder
+
+    page.add(
+        ft.Container(
+            content=ft.Column([
+                ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.CHAT, color="white"),
+                        ft.Text("InsuBot", size=20, weight="bold", color="white")
+                    ]),
+                    padding=15
+                ),
+                ft.Divider(color="gray"),
+                chat,
+                ft.Row(
+                    controls=[user_input, send_btn],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                )
+            ]),
+            bgcolor="#1a1a1a",
+            border_radius=10,
+            expand=True
+        )
     )
 
-    def add_bubble(message, sender):
-        if sender == "user":
-            bubble = ft.Container(
-                content=ft.Text(message, color=ft.Colors.WHITE),
-                bgcolor="#2979FF",
-                padding=10,
-                border_radius=10,
-                alignment=ft.alignment.center_right,
-                margin=ft.margin.only(left=50),
-            )
-        else:
-            bubble = ft.Container(
-                content=ft.Text(message, color=ft.Colors.BLACK),
-                bgcolor="#F5F5F5",
-                padding=10,
-                border_radius=10,
-                alignment=ft.alignment.center_left,
-                margin=ft.margin.only(right=50),
-            )
-        chat_area.controls.append(bubble)
-        page.update()
-    
-    def send_message():
-        user_message = input_box.value.strip()
-        if not user_message:
-            return
-
-        add_bubble(user_message, "user")
-
-        user_message_lower = user_message.lower()
-        response = next((value for key, value in RESPUESTAS.items() if key in user_message_lower),
-                        "Lo siento, no entendí la pregunta. ¿Puedes reformularla?")
-        add_bubble(response, "bot")
-        input_box.value = ""
-        page.update()
-
-    page.add(chat_area, input_row)
-
-ft.app(target=main, view=ft.WEB_BROWSER)
+ft.app(target=main)
