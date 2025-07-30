@@ -88,17 +88,22 @@ def main(page: ft.Page):
         expand=True
     )
 
-    def responder(e=None):  # <-- Permitir llamadas desde botón e teclado
-        pregunta = user_input.value.strip().lower()
-        if not pregunta:
-            return
-        respuesta = RESPUESTAS.get(pregunta, RESPUESTAS["default"])
+    def responder(e=None):
+     pregunta = user_input.value.strip().lower()
+     if not pregunta:
+        return
 
-        add_message(pregunta, is_user=True)
-        add_message(respuesta, is_user=False)
+     respuesta = RESPUESTAS["default"]
+     for clave in RESPUESTAS:
+        if clave in pregunta:
+            respuesta = RESPUESTAS[clave]
+            break
 
-        user_input.value = ""
-        page.update()
+     add_message(pregunta, is_user=True)
+     add_message(respuesta, is_user=False)
+
+     user_input.value = ""
+     page.update()
 
     def add_message(text, is_user=False):
         bubble_color = "#4e5fb6" if is_user else "#2c2f48"
