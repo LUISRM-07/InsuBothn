@@ -34,7 +34,7 @@ RESPUESTAS = {
     "actividades extraescolares": "Ofrecemos actividades fuera del horario como talleres, cursos y excursiones educativas.",
     "salidas extracurriculares": "Contamos con programas de excursiones para enriquecer la experiencia educativa.",
     "eventos": "Publicamos nuestros eventos académicos y escolares en nuestra página de Facebook.",
-    "eventos familiares": "Organizamos celebraciones familiares como el Día de la Madre y otras actividades especiales.",
+    "eventos_familiares": "Organizamos celebraciones familiares como el Día de la Madre y otras actividades especiales.",
     "evaluaciones": "Se realizan evaluaciones periódicas y al final de cada parcial.",
     "notas": "Las notas pueden consultarse en línea o presencialmente.",
     "tareas": "Los docentes asignan tareas regularmente a través de Google Classroom.",
